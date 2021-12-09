@@ -34,7 +34,9 @@ impl Game {
         ))
     }
 
-    pub fn tick(&mut self) {}
+    pub fn tick(&mut self, dt: f64) {
+        self.0.render()
+    }
 
     pub fn handle_key_down(&mut self, control: core::input::Control) {
         self.0.input.add(control);
@@ -42,6 +44,11 @@ impl Game {
 
     pub fn handle_key_up(&mut self, control: core::input::Control) {
         self.0.input.remove(control);
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn scene(&self) -> *const core::scene::Scene {
+        &self.0.scene
     }
 }
 

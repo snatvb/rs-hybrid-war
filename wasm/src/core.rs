@@ -1,8 +1,11 @@
+pub mod game_objects;
 pub mod geometry;
+pub mod gfx;
 pub mod input;
 mod iter;
 pub mod scene;
 pub mod typography;
+use game_objects::GameObject;
 use geometry::Size;
 use rapier2d::prelude::PhysicsPipeline;
 
@@ -18,6 +21,7 @@ pub struct Game<T> {
     pub state: T,
     pub input: input::Input,
     pub scene: scene::Scene,
+    game_objects: Vec<GameObject>,
     physics_pipeline: PhysicsPipeline,
     size: Size,
     fonts: FontLibrary,
@@ -35,6 +39,7 @@ impl<T> Game<T> {
             state,
             size,
             fonts,
+            game_objects: Vec::new(),
             input: input::Input::new(),
             scene: scene::Scene::new(),
             physics_pipeline: PhysicsPipeline::new(),
@@ -48,5 +53,9 @@ impl<T> Game<T> {
 
     pub fn get_size(&self) -> &Size {
         &self.size
+    }
+
+    pub fn render(&mut self) {
+        self.scene.render(&self.game_objects);
     }
 }

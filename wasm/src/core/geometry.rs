@@ -60,6 +60,7 @@ impl PartialEq for Point {
         self.cmp(other) == Ordering::Equal
     }
 }
+
 impl Eq for Point {}
 
 impl Point {
