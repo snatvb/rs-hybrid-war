@@ -39,7 +39,7 @@ impl AnimationStage {
 
 pub fn change(
     mut commands: Commands,
-    mut query: Query<(Entity, &AnimationStage), (Changed<AnimationStage>)>,
+    mut query: Query<(Entity, &AnimationStage), Changed<AnimationStage>>,
     mut animations: ResMut<Assets<SpriteSheetAnimation>>,
 ) {
     for (entity, animation_stage) in query.iter() {
@@ -52,20 +52,3 @@ pub fn change(
         }
     }
 }
-
-// pub fn movement(
-//     mut commands: Commands,
-//     mut query: Query<(Entity, &Walking), (Changed<Walking>)>,
-//     mut animations: ResMut<Assets<SpriteSheetAnimation>>,
-// ) {
-//     for (entity, walking) in query.iter() {
-//         crate::logger::log!("Animation changed");
-//         //   let animation_handle = animations.add(
-//         //     sprites::PLAYER
-//         //         .animations
-//         //         .get("idle")
-//         //         .expect("idle animation is require for player")
-//         //         .clone(),
-//         // );
-//     }
-// }

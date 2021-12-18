@@ -12,6 +12,7 @@ use crate::{
     },
     input::{pressed_pair, KeyDirection},
     materials::Materials,
+    shells::{spawn_bullet, Bullet},
     sprites,
 };
 
@@ -95,9 +96,36 @@ pub fn rotate_by_cursor(
     mut query: Query<&mut LookAt, With<Player>>,
 ) {
     if let Ok(mut look_at) = query.single_mut() {
-        let cursor_position = query_camera.single().unwrap();
+        let cursor_position = query_camera.single().expect("Camera must be initialized");
         let world_cursor_pos = Vec2::from(cursor_position.world);
         look_at.target = world_cursor_pos;
         look_at.angle_offset = sprites::PLAYER.get_offset_angle();
+    }
+}
+
+pub fn fire(
+    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut commands: Commands,
+    mouse_input: Res<Input<MouseButton>>,
+    query_camera: Query<&CursorPosition, With<MainCamera>>,
+    mut query: Query<&Transform, With<Player>>,
+) {
+    if let Ok(transform) = query.single() {
+        if mouse_input.pressed(MouseButton::Left) {
+            let cursor_position = query_camera.single().expect("Camera must be initialized");
+            let bullet_transform = Transform {
+                translation: transform.translation.clone(),
+                scale: Vec3::new(1., 1., 1.),
+                ..Default::default()
+            };
+
+            let bullet = Bullet {
+                direction: (Vec2::from(cursor_position.world) - transform.translation.truncate())
+                    .normalize(),
+                speed: 500.0,
+                damage: 1.0,
+            };
+            spawn_bullet(&mut commands, &mut materials, bullet_transform, bullet);
+        }
     }
 }

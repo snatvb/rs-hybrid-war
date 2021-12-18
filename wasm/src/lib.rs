@@ -4,8 +4,6 @@
 extern crate lazy_static;
 #[macro_use]
 extern crate derive_more;
-#[macro_use]
-extern crate stdweb;
 extern crate benimator;
 extern crate bevy;
 
@@ -18,10 +16,14 @@ mod input;
 mod logger;
 mod materials;
 mod player;
+mod shells;
 mod sprites;
 
 use benimator::*;
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    window::{WindowMode, WindowResizeConstraints},
+};
 use materials::Materials;
 use std::time::Duration;
 use wasm_bindgen::prelude::*;
@@ -37,16 +39,26 @@ pub fn run() {
     })
     .add_plugin(AnimationPlugin)
     .add_plugin(bevy_webgl2::WebGL2Plugin)
-    .add_plugin(core::CorePlugin);
+    .add_plugin(core::CorePlugin)
+    .add_plugin(shells::ShellsPlugin);
 
     // --- resources
-    app.insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
-        .insert_resource(WindowDescriptor {
-            title: "Rust Invaders!".to_string(),
-            width: 598.0,
-            height: 676.0,
-            ..Default::default()
-        });
+    app.insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)));
+    let window = WindowDescriptor {
+        title: "Some Tank Game!".to_string(),
+        width: 1024.0,
+        height: 768.0,
+        resize_constraints: WindowResizeConstraints {
+            min_width: 800.0,
+            min_height: 600.0,
+            max_width: f32::MAX,
+            max_height: f32::MAX,
+        },
+        mode: WindowMode::BorderlessFullscreen,
+        resizable: false,
+        ..Default::default()
+    };
+    app.insert_resource(window);
 
     // --- start up systems
     app.add_startup_system(setup.system()).add_startup_stage(
@@ -56,6 +68,7 @@ pub fn run() {
 
     // --- systems
     app.add_system(player::movement.system())
+        .add_system(player::fire.system())
         .add_system(player::rotate_by_cursor.system())
         .add_system(animations::change.system());
 

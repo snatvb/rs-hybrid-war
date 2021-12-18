@@ -8,12 +8,3 @@ function run(instance: Wasm) {
 }
 
 wasm.then(run)
-
-const app = document.getElementById('app')
-if (app) {
-  app.innerHTML = `
-  <div>
-    RUST WASM <- VS -> JS
-  </div>
-  `
-}
