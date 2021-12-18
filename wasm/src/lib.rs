@@ -14,7 +14,6 @@ mod common;
 mod animations;
 mod components;
 mod core;
-mod easy_physics;
 mod input;
 mod logger;
 mod materials;
@@ -37,7 +36,8 @@ pub fn run() {
         group.add_before::<bevy::asset::AssetPlugin, _>(bevy_web_asset::WebAssetPlugin)
     })
     .add_plugin(AnimationPlugin)
-    .add_plugin(bevy_webgl2::WebGL2Plugin);
+    .add_plugin(bevy_webgl2::WebGL2Plugin)
+    .add_plugin(core::CorePlugin);
 
     // --- resources
     app.insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
@@ -49,18 +49,13 @@ pub fn run() {
         });
 
     // --- start up systems
-    app.add_startup_system(core::camera::setup_main_camera.system())
-        .add_startup_system(setup.system())
-        .add_startup_stage(
-            "game_setup_actors",
-            SystemStage::single(player::spawn.system()),
-        );
+    app.add_startup_system(setup.system()).add_startup_stage(
+        "game_setup_actors",
+        SystemStage::single(player::spawn.system()),
+    );
 
     // --- systems
-    app.add_system(core::camera::cursor_system.system())
-        .add_system(player::movement.system())
-        .add_system(easy_physics::movement.system())
-        .add_system(easy_physics::friction.system())
+    app.add_system(player::movement.system())
         .add_system(player::rotate_by_cursor.system())
         .add_system(animations::change.system());
 

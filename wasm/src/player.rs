@@ -1,18 +1,14 @@
-use std::{
-    f32::consts::{FRAC_PI_2, PI},
-    ops::Range,
-};
+use std::ops::Range;
 
 use benimator::*;
-use bevy::{app::Events, input::mouse::MouseMotion, prelude::*, render::camera::Camera};
-use wasm_bindgen::prelude::*;
+use bevy::prelude::*;
 
 use crate::{
     animations::AnimationStage,
     components::{Speed, Velocity, WalkAvailable},
     core::{
         camera::{CursorPosition, MainCamera},
-        math::{deg_to_rad, rad_to_deg},
+        extensions::LookAt,
     },
     input::{pressed_pair, KeyDirection},
     materials::Materials,
@@ -54,6 +50,7 @@ pub fn spawn(
         .insert(animation_handle)
         .insert(Play)
         .insert(WalkAvailable)
+        .insert(LookAt::default())
         .insert(Speed(500.));
 }
 pub fn movement(
@@ -93,42 +90,14 @@ pub fn movement(
     }
 }
 
-// pub fn rotate_by_cursor(
-//     mut cursor_moved: EventReader<CursorMoved>,
-//     windows: Res<Windows>,
-//     q_camera: Query<(&Camera, &Transform), With<OrthographicCameraBundle>>,
-//     mut query: Query<&mut Transform, With<Player>>,
-// ) {
-//     if let (Ok(mut transform), Ok((camera, camera_transform)), Some(cursor_position)) = (
-//         query.single_mut(),
-//         q_camera.single(),
-//         cursor_moved.iter().last().map(|f| f.position),
-//     ) {
-//         // let position = camera.world_to_screen(windows, camera_transform, transform.translation);
-
-//         // let angle = (cursor_position - position).angle_between(position);
-//         // crate::logger::log!(
-//         //     "({};{}) -> ({};{}) = ({})",
-//         //     position.x,
-//         //     position.y,
-//         //     cursor_position.x,
-//         //     cursor_position.y,
-//         //     angle
-//         // );
-//         // transform.rotation = Quat::from_rotation_z(angle);
-//     }
-// }
-
 pub fn rotate_by_cursor(
     query_camera: Query<&CursorPosition, With<MainCamera>>,
-    mut query: Query<&mut Transform, With<Player>>,
+    mut query: Query<&mut LookAt, With<Player>>,
 ) {
-    if let Ok(mut transform) = query.single_mut() {
+    if let Ok(mut look_at) = query.single_mut() {
         let cursor_position = query_camera.single().unwrap();
         let world_cursor_pos = Vec2::from(cursor_position.world);
-        let position = transform.translation.truncate();
-        let direction = world_cursor_pos - position;
-        let angle = direction.angle_between(Vec2::new(1.0, 0.0));
-        transform.rotation = Quat::from_rotation_z(FRAC_PI_2 - angle + deg_to_rad(-90.0));
+        look_at.target = world_cursor_pos;
+        look_at.angle_offset = sprites::PLAYER.get_offset_angle();
     }
 }
