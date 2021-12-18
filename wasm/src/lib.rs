@@ -1,59 +1,79 @@
 #![allow(unused)]
 
-mod color;
 #[macro_use]
-mod logger;
+extern crate lazy_static;
+#[macro_use]
+extern crate derive_more;
+#[macro_use]
+extern crate stdweb;
+extern crate benimator;
+extern crate bevy;
+
+#[macro_use]
+mod common;
+mod animations;
+mod components;
 mod core;
-mod rect;
-mod size;
-mod vec2d;
-use logger::*;
-use rect::*;
-use std::cell::RefCell;
-use std::rc::Rc;
-use vec2d::*;
+mod easy_physics;
+mod input;
+mod logger;
+mod materials;
+mod player;
+mod sprites;
+
+use benimator::*;
+use bevy::prelude::*;
+use materials::Materials;
+use std::time::Duration;
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-
-fn window() -> web_sys::Window {
-    web_sys::window().expect("no global `window` exists")
-}
-enum State {
-    MainMenu,
-}
 
 #[wasm_bindgen]
-pub struct Game(core::Game<State>);
+pub fn run() {
+    logger::log!("Running game...");
+    let mut app = App::build();
 
-#[wasm_bindgen]
-impl Game {
-    pub fn new() -> Self {
-        Game(core::Game::new(
-            core::geometry::Size::new(800.0, 600.0),
-            State::MainMenu,
-        ))
-    }
+    // --- plugins
+    app.add_plugins_with(DefaultPlugins, |group| {
+        group.add_before::<bevy::asset::AssetPlugin, _>(bevy_web_asset::WebAssetPlugin)
+    })
+    .add_plugin(AnimationPlugin)
+    .add_plugin(bevy_webgl2::WebGL2Plugin);
 
-    pub fn tick(&mut self, dt: f64) {
-        self.0.render()
-    }
+    // --- resources
+    app.insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
+        .insert_resource(WindowDescriptor {
+            title: "Rust Invaders!".to_string(),
+            width: 598.0,
+            height: 676.0,
+            ..Default::default()
+        });
 
-    pub fn handle_key_down(&mut self, control: core::input::Control) {
-        self.0.input.add(control);
-    }
+    // --- start up systems
+    app.add_startup_system(core::camera::setup_main_camera.system())
+        .add_startup_system(setup.system())
+        .add_startup_stage(
+            "game_setup_actors",
+            SystemStage::single(player::spawn.system()),
+        );
 
-    pub fn handle_key_up(&mut self, control: core::input::Control) {
-        self.0.input.remove(control);
-    }
+    // --- systems
+    app.add_system(core::camera::cursor_system.system())
+        .add_system(player::movement.system())
+        .add_system(easy_physics::movement.system())
+        .add_system(easy_physics::friction.system())
+        .add_system(player::rotate_by_cursor.system())
+        .add_system(animations::change.system());
 
-    #[wasm_bindgen(getter)]
-    pub fn scene(&self) -> *const core::scene::Scene {
-        &self.0.scene
-    }
+    app.run();
 }
 
-impl Default for Game {
-    fn default() -> Self {
-        Self::new()
-    }
+fn setup(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut materials: ResMut<Assets<Texture>>,
+    mut windows: ResMut<Windows>,
+) {
+    commands.insert_resource(Materials {
+        player: asset_server.load(sprites::PLAYER.path),
+    });
 }

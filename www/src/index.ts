@@ -1,13 +1,10 @@
-import createController from './control'
 import wasm, { Wasm } from './wasm'
 
 function run(instance: Wasm) {
-  const controller = createController(instance)
-  const game = instance.Game.new()
-  // game.scene.
-  console.log(game.scene)
-  controller.subscribe('keydown', game.handle_key_down)
-  controller.subscribe('keyup', game.handle_key_up)
+  try {
+    console.clear()
+    instance.run()
+  } catch (e) {}
 }
 
 wasm.then(run)

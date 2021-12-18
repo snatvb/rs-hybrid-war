@@ -6,29 +6,24 @@ authors = ["snatvb <snatvb@ya.ru>"]
 description = "A sample project with wasm-pack"
 license = "MIT"
 
+# [build]
+# target = "wasm32-unknown-unknown"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
 crate-type = ["cdylib"]
 
+# [target.'cfg(target_arch = "wasm32")'.dependencies]
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4.28"
-js-sys = "0.3.55"
-rapier2d = { version = "0.11", features = [ "simd-stable" ] }
-
-[dependencies.web-sys]
-version = "0.3.4"
-features = [
-  'CanvasRenderingContext2d',
-  'ImageData',
-  'Document',
-  'Element',
-  'HtmlCanvasElement',
-  'Window',
-  "console",
-  'Performance',
-]
+wasm-bindgen = "0.2"
+bevy = {version = "0.5", default-features = false, features = ["bevy_winit", "render"]}
+bevy_web_asset = "0.1"
+bevy_webgl2 = "0.5"
+benimator = "0.3.1"
+lazy_static = "1.4.0"
+derive_more = "0.99.17"
+stdweb = "0.4.20"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false
+

@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const RsWatchPlugin = require('./scripts/rs-watch-plugin')
 
@@ -22,8 +23,19 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /wasm_bg\.js$/,
+        loader: 'string-replace-loader',
+        options: {
+          search: /module.require/,
+          replace: "(module)('require')",
+        },
+      },
     ],
   },
+  // externals: {
+  //   '../../wasm/pkg/wasm.js': 'wasm',
+  // },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
@@ -32,10 +44,15 @@ module.exports = {
       sourceRoot: path.resolve(__dirname, '..', 'wasm', 'src'),
       crateRoot: path.resolve(__dirname, '..', 'wasm'),
       mode: isProd ? 'release' : 'debug',
+      move: path.resolve(__dirname, 'public', 'wasm'),
     }),
+    // new webpack.IgnorePlugin({
+    //   resourceRegExp: /^\getStringFromWasm0/,
+    //   contextRegExp: /getStringFromWasm0/,
+    // }),
   ],
   experiments: {
-    syncWebAssembly: true,
+    asyncWebAssembly: true,
   },
   stats: 'errors-warnings',
   devServer: {

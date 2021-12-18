@@ -4,12 +4,13 @@ const { validate } = require('schema-utils')
 const watch = require('node-watch')
 const cp = require('child_process')
 const fs = require('fs').promises
+const fse = require('fs-extra')
 
 const pluginName = 'RsWatchPlugin'
 
 async function moveFile(oldPath, newPath) {
   await fs.mkdir(path.dirname(newPath), { recursive: true })
-  return fs.rename(oldPath, newPath)
+  return fse.copySync(oldPath, newPath, { overwrite: true })
 }
 
 class RsWatchPlugin {
@@ -28,10 +29,14 @@ class RsWatchPlugin {
   }
 
   execute() {
-    const res = cp.spawnSync('wasm-pack', ['build', '--' + this.options.mode], {
-      cwd: this.options.crateRoot,
-      stdio: 'inherit',
-    })
+    const res = cp.spawnSync(
+      'wasm-pack',
+      ['build', '--target', 'web', '--' + this.options.mode],
+      {
+        cwd: this.options.crateRoot,
+        stdio: 'inherit',
+      },
+    )
 
     if (this.options.move) {
       moveFile(path.resolve(this.options.crateRoot, 'pkg'), this.options.move)
