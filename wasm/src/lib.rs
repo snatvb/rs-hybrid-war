@@ -4,6 +4,8 @@
 extern crate lazy_static;
 #[macro_use]
 extern crate derive_more;
+#[macro_use]
+extern crate enum_dispatch;
 extern crate benimator;
 extern crate bevy;
 
@@ -45,7 +47,7 @@ pub fn run() {
     // --- resources
     app.insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)));
     let window = WindowDescriptor {
-        title: "Some Tank Game!".to_string(),
+        title: "UNTITLED".to_string(),
         width: 1024.0,
         height: 768.0,
         resize_constraints: WindowResizeConstraints {

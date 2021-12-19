@@ -22,9 +22,23 @@ bevy_webgl2 = "0.5"
 benimator = "0.3.1"
 lazy_static = "1.4.0"
 derive_more = "0.99.17"
+enum_dispatch = "0.3.7"
+
+[package.metadata.wasm-pack.profile.dev.wasm-bindgen]
+debug-js-glue = true
+demangle-name-section = true
+dwarf-debug-info = false
 
 [package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-O4']
+
+[package.metadata.wasm-pack.profile.dev]
 wasm-opt = false
+
+[package.metadata.wasm-pack.profile.profiling.wasm-bindgen]
+debug-js-glue = false
+demangle-name-section = true
+dwarf-debug-info = false
 
 [dependencies.web-sys]
 version = "0.3"
