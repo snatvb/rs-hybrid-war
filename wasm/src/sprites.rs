@@ -18,6 +18,18 @@ pub struct Sprite {
     pub animations: AnimationStorage,
 }
 
+impl Default for Sprite {
+    fn default() -> Self {
+        Self {
+            path: Default::default(),
+            offset_angle: Default::default(),
+            size: Default::default(),
+            grid: &[0, 0],
+            animations: Default::default(),
+        }
+    }
+}
+
 impl Sprite {
     pub fn size(&self) -> &Vec2 {
         &self.size
@@ -47,6 +59,42 @@ lazy_static! {
             0..=1,
             Duration::from_millis(800),
           )
+        },
+    };
+}
+
+#[derive(Default)]
+pub struct EnvironmentObjectSprite {
+    offset: Vec2,
+    size: Vec2,
+}
+
+impl EnvironmentObjectSprite {
+    pub fn as_rect(&self) -> bevy::sprite::Rect {
+        bevy::sprite::Rect {
+            min: self.offset,
+            max: self.offset + self.size,
+        }
+    }
+}
+
+pub type EnvironmentObjects = HashMap<&'static str, EnvironmentObjectSprite>;
+
+pub struct EnvironmentSprite {
+    pub path: &'static str,
+    pub size: Vec2,
+    pub objects: EnvironmentObjects,
+}
+
+lazy_static! {
+    pub static ref PROTO: EnvironmentSprite = EnvironmentSprite {
+        path: "images/objects/proto.png",
+        size: Vec2::new(340.0, 221.0),
+        objects: collection! {
+            "wall" => EnvironmentObjectSprite {
+                offset: Vec2::new(257.0, 5.0),
+                size: Vec2::new(64.0, 134.0),
+            },
         },
     };
 }

@@ -39,15 +39,13 @@ pub fn spawn(
         .spawn_bundle(SpriteSheetBundle {
             texture_atlas: textures.add(sprites::PLAYER.as_texture_atlas(materials.player.clone())),
             transform: Transform {
-                translation: Vec3::new(0. as f32, (bottom + 75. / 4. + 5.) as f32, 10. as f32),
-                scale: Vec3::new(1., 1., 1.),
                 ..Default::default()
             },
             ..Default::default()
         })
         .insert(AnimationStage::new("idle", &sprites::PLAYER))
         .insert(Player)
-        .insert(Velocity::new(0., 0.))
+        .insert(Velocity::default())
         .insert(animation_handle)
         .insert(Play)
         .insert(WalkAvailable)

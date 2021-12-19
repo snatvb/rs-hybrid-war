@@ -14,6 +14,7 @@ mod common;
 mod animations;
 mod components;
 mod core;
+mod environment;
 mod input;
 mod logger;
 mod materials;
@@ -63,10 +64,15 @@ pub fn run() {
     app.insert_resource(window);
 
     // --- start up systems
-    app.add_startup_system(setup.system()).add_startup_stage(
-        "game_setup_actors",
-        SystemStage::single(player::spawn.system()),
-    );
+    app.add_startup_system(setup_materials.system())
+        .add_startup_stage(
+            "game_setup",
+            SystemStage::single(environment::setup.system()),
+        )
+        .add_startup_stage(
+            "game_setup_actors",
+            SystemStage::single(player::spawn.system()),
+        );
 
     // --- systems
     app.add_system(player::movement.system())
@@ -77,7 +83,7 @@ pub fn run() {
     app.run();
 }
 
-fn setup(
+fn setup_materials(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut materials: ResMut<Assets<Texture>>,
@@ -85,5 +91,6 @@ fn setup(
 ) {
     commands.insert_resource(Materials {
         player: asset_server.load(sprites::PLAYER.path),
+        environment: collection! {sprites::PROTO.path => asset_server.load(sprites::PROTO.path)},
     });
 }

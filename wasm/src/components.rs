@@ -19,6 +19,7 @@ impl DerefMut for Speed {
     }
 }
 
+#[derive(Default)]
 pub struct Velocity(pub Vec2);
 
 impl Velocity {
