@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{materials::Materials, sprites};
+use crate::{
+    core::collision::{Circle, Collider, RigidBody},
+    materials::Materials,
+    sprites,
+};
 
 pub struct Wall;
 
@@ -27,6 +31,10 @@ pub fn setup(
                 ..Default::default()
             },
             ..Default::default()
+        })
+        .insert(RigidBody {
+            collider: Collider::Circle(Circle(Vec2::new(0.0, 0.0), 20.0)),
+            solid: true,
         })
         .insert(Wall);
 }

@@ -8,7 +8,7 @@ use crate::{
     components::{Speed, Velocity, WalkAvailable},
     core::{
         camera::{CursorPosition, MainCamera},
-        collision::{Collider, Rectangle, RigidBody},
+        collision::{Circle, Collider, Rectangle, RigidBody},
         extensions::LookAt,
     },
     input::{pressed_pair, KeyDirection},
@@ -44,7 +44,8 @@ pub fn spawn(
             ..Default::default()
         })
         .insert(RigidBody {
-            collider: Collider::Rectangle(Rectangle::from_size_vec(sprites::PLAYER.size)),
+            // collider: Collider::Rectangle(Rectangle::from_size_vec(sprites::PLAYER.size)),
+            collider: Collider::Circle(Circle(Vec2::new(0.0, 0.0), 20.0)),
             solid: true,
         })
         .insert(AnimationStage::new("idle", &sprites::PLAYER))

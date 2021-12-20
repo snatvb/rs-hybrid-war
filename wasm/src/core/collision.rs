@@ -8,6 +8,7 @@ mod detections;
 
 pub use components::*;
 
+#[derive(Debug)]
 pub struct Collided {
     pub hit: Hit,
     pub a_entity: Entity,
@@ -33,6 +34,7 @@ pub fn detection(
                 &b_rigid_body.collider,
                 b_transform.translation.truncate(),
             ) {
+                crate::logger::log!("COLLIDE!");
                 events.send(Collided {
                     hit,
                     a_entity,
@@ -50,5 +52,6 @@ impl Plugin for CollisionPlugin {
         app.add_event::<Collided>().add_system(detection.system());
         app.add_system(debug::visualize_detect.system());
         app.add_system(debug::visualize_sync_position.system());
+        app.add_system(debug::log_collide.system());
     }
 }

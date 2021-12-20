@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 
-use super::{Collider, RigidBody};
+use super::{Collided, Collider, RigidBody};
 
 pub struct DebugVisualize;
 pub struct DebugVisualizer(Entity);
@@ -35,6 +35,21 @@ pub fn visualize_detect(
                     ))
                     .insert(DebugVisualizer(entity));
             }
+            Collider::Circle(circle) => {
+                let shape = shapes::Circle {
+                    radius: circle.radius(),
+                    center: circle.offset(),
+                };
+                commands.entity(entity).insert(DebugVisualize);
+                commands
+                    .spawn_bundle(GeometryBuilder::build_as(
+                        &shape,
+                        ShapeColors::outlined(Color::GREEN, Color::BLACK),
+                        DrawMode::Stroke(StrokeOptions::default().with_line_width(2.0)),
+                        transform.clone(),
+                    ))
+                    .insert(DebugVisualizer(entity));
+            }
             _ => (),
         }
     }
@@ -51,5 +66,11 @@ pub fn visualize_sync_position(
         } else {
             commands.entity(entity).despawn();
         }
+    }
+}
+
+pub fn log_collide(mut collide_events: EventReader<Collided>) {
+    for collided in collide_events.iter() {
+        crate::logger::log!("Collided {:?}", collided);
     }
 }

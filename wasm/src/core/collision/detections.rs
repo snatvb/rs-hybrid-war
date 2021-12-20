@@ -1,7 +1,19 @@
 use super::components::*;
 use bevy::prelude::*;
 
-pub fn detect_aabb_vs_aabb(
+// mod angle_sides {
+//     use super::super::super::math::deg_to_rad;
+//     use std::ops::Range;
+
+//     lazy_static! {
+//         pub static ref TOP: Range<f32> = deg_to_rad(315.0)..deg_to_rad(45.0);
+//         pub static ref RIGHT: Range<f32> = deg_to_rad(45.0)..deg_to_rad(135.0);
+//         pub static ref BOTTOM: Range<f32> = deg_to_rad(135.0)..deg_to_rad(225.0);
+//         pub static ref LEFT: Range<f32> = deg_to_rad(225.0)..deg_to_rad(315.0);
+//     }
+// }
+
+pub fn aabb_vs_aabb(
     a_pos: Vec2,
     b_pos: Vec2,
     a_collider: &Rectangle,
@@ -46,6 +58,23 @@ pub fn detect_aabb_vs_aabb(
             (None, None) => None,
         }
         .map(Hit::from)
+    } else {
+        None
+    }
+}
+
+pub fn circle_vs_circle(
+    a_pos: Vec2,
+    b_pos: Vec2,
+    a_collider: &Circle,
+    b_collider: &Circle,
+) -> Option<Hit> {
+    let distance = a_collider
+        .in_world_position(a_pos)
+        .distance(b_collider.in_world_position(b_pos));
+    let minimal_distance = a_collider.radius() + b_collider.radius();
+    if distance < minimal_distance {
+        Some(Hit::CircleCircle(a_pos - b_pos))
     } else {
         None
     }

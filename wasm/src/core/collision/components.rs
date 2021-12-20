@@ -1,6 +1,7 @@
-use super::detections::detect_aabb_vs_aabb;
+use super::detections;
 use bevy::prelude::*;
 
+#[derive(Debug)]
 pub enum CollisionSide {
     Left,
     Right,
@@ -8,10 +9,11 @@ pub enum CollisionSide {
     Bottom,
 }
 
-#[derive(From)]
+#[derive(From, Debug)]
 pub enum Hit {
     #[allow(non_camel_case_types)]
     AABB_AABB(CollisionSide),
+    CircleCircle(Vec2),
 }
 
 #[derive(Default)]
@@ -40,7 +42,7 @@ impl Collide for Rectangle {
     fn collide(&self, position: Vec2, b_collider: &Collider, b_position: Vec2) -> Option<Hit> {
         match b_collider {
             Collider::Rectangle(b_collider) => {
-                detect_aabb_vs_aabb(position, b_position, self, b_collider)
+                detections::aabb_vs_aabb(position, b_position, self, b_collider)
             }
             _ => None,
         }
@@ -48,11 +50,28 @@ impl Collide for Rectangle {
 }
 
 #[derive(Default)]
-pub struct Circle(pub Vec2, f32);
+pub struct Circle(pub Vec2, pub f32);
+
+impl Circle {
+    pub fn offset(&self) -> Vec2 {
+        self.0
+    }
+
+    pub fn radius(&self) -> f32 {
+        self.1
+    }
+
+    pub fn in_world_position(&self, object_position: Vec2) -> Vec2 {
+        self.0 + object_position
+    }
+}
 
 impl Collide for Circle {
     fn collide(&self, position: Vec2, b_collider: &Collider, b_position: Vec2) -> Option<Hit> {
         match b_collider {
+            Collider::Circle(b_collider) => {
+                detections::circle_vs_circle(position, b_position, self, b_collider)
+            }
             _ => None,
         }
     }
