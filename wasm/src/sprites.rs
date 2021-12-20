@@ -12,8 +12,8 @@ pub type AnimationStorage = HashMap<&'static str, SpriteSheetAnimation>;
 
 pub struct Sprite {
     pub path: &'static str,
-    offset_angle: f32,
-    size: Vec2,
+    pub offset_angle: f32,
+    pub size: Vec2,
     pub grid: &'static [u32; 2],
     pub animations: AnimationStorage,
 }

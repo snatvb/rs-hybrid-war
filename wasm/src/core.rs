@@ -1,4 +1,5 @@
 use bevy::{diagnostic::FrameTimeDiagnosticsPlugin, prelude::*, window::WindowResized};
+use bevy_prototype_lyon::plugin::ShapePlugin;
 
 pub mod camera;
 mod canvas;
@@ -14,8 +15,11 @@ impl Plugin for CorePlugin {
     fn build(&self, app: &mut AppBuilder) {
         // plugins
         app.add_plugin(FrameTimeDiagnosticsPlugin::default());
+        app.add_plugin(ShapePlugin);
+        app.add_plugin(collision::CollisionPlugin);
         // resources
-        app.insert_resource(canvas::LastSize::default());
+        app.insert_resource(canvas::LastSize::default())
+            .insert_resource(Msaa { samples: 4 });
         // start up
         app.add_startup_system(setup.system())
             .add_startup_system(monitoring::setup.system())

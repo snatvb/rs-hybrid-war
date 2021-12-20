@@ -23,6 +23,7 @@ benimator = "0.3.1"
 lazy_static = "1.4.0"
 derive_more = "0.99.17"
 enum_dispatch = "0.3.7"
+bevy_prototype_lyon = "0.3.1"
 
 [package.metadata.wasm-pack.profile.dev.wasm-bindgen]
 debug-js-glue = true

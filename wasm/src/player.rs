@@ -8,6 +8,7 @@ use crate::{
     components::{Speed, Velocity, WalkAvailable},
     core::{
         camera::{CursorPosition, MainCamera},
+        collision::{Collider, Rectangle, RigidBody},
         extensions::LookAt,
     },
     input::{pressed_pair, KeyDirection},
@@ -26,7 +27,6 @@ pub fn spawn(
     mut textures: ResMut<Assets<TextureAtlas>>,
     mut animations: ResMut<Assets<SpriteSheetAnimation>>,
 ) {
-    let bottom = -100.0 as f64;
     let animation_handle = animations.add(
         sprites::PLAYER
             .animations
@@ -42,6 +42,10 @@ pub fn spawn(
                 ..Default::default()
             },
             ..Default::default()
+        })
+        .insert(RigidBody {
+            collider: Collider::Rectangle(Rectangle::from_size_vec(sprites::PLAYER.size)),
+            solid: true,
         })
         .insert(AnimationStage::new("idle", &sprites::PLAYER))
         .insert(Player)
