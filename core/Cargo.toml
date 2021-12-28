@@ -1,0 +1,12 @@
+[package]
+name = "core"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = { git = "https://github.com/bevyengine/bevy", branch = "main" }
+console = {path = "../console"}
+# bevy = {git = "https://github.com/bevyengine/bevy", rev = "de8edd3"}
+# bevy_prototype_lyon = {git = "https://github.com/Nilirad/bevy_prototype_lyon", rev = "c596d965f0bc"}

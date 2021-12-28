@@ -66,7 +66,7 @@ pub fn fps_update_system(
             if let Some(average) = fps.average() {
                 text.sections[0].value = "FPS: ".to_string();
                 text.sections[1].value = format!("{:.2}", average);
-                let percent = average as f32 / 60.0;
+                let percent = (average as f32 / 60.0).clamp(0., 1.);
                 text.sections[1].style.color.set_r(1.0 - percent);
                 text.sections[1].style.color.set_g(percent);
                 text.sections[1].style.color.set_b(0.1);
@@ -85,7 +85,7 @@ pub fn ms_update_system(
                 let ms = (average * 1000.0) as f32;
                 text.sections[0].value = "MS: ".to_string();
                 text.sections[1].value = format!("{:.2}", ms);
-                let percent = (ms - 16.0) / 16.0;
+                let percent = (ms - 16.0).clamp(0., 16.) / 16.0;
                 text.sections[1].style.color.set_r(percent);
                 text.sections[1].style.color.set_g(1.0 - percent);
                 text.sections[1].style.color.set_b(0.1);

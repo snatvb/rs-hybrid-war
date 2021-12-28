@@ -6,11 +6,12 @@ license = "MIT"
 name = "hybrid-war"
 version = "0.1.0"
 
+[workspace]
+members = ["core/", "console/"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-# 585d0b84672b0309e2bc0487e9c43d9df29212d0
 [dependencies]
-bevy = {git = "https://github.com/bevyengine/bevy", rev = "de8edd3"}
-bevy_prototype_lyon = {git = "https://github.com/Nilirad/bevy_prototype_lyon", rev = "c596d965f0bc"}
-derive_more = "0.99.17"
-enum_dispatch = "0.3.7"
-lazy_static = "1.4.0"
+core = {path = "./core"}
+derive_more = "0.99"
+enum_dispatch = "0.3"
+lazy_static = "1.4"

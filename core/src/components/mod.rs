@@ -1,6 +1,9 @@
 use std::f32::consts::FRAC_PI_2;
 use bevy::prelude::*;
 
+mod animation;
+pub use animation::*;
+
 #[derive(Default, Component)]
 pub struct LookAt {
     pub target: Vec2,

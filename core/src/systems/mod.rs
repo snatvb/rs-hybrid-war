@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use super::components::*;
 
+pub mod animation;
+
 pub fn look_at(mut query: Query<(&mut Transform, &LookAt), (Changed<Transform>, Changed<LookAt>)>) {
     for (mut transform, target) in query.iter_mut() {
         transform.rotation = target.look(transform.translation.truncate());
