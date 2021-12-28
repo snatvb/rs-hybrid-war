@@ -1,75 +1,10 @@
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext, EguiPlugin};
-use derive_more::{DerefMut, Deref};
+
+mod structs;
+pub use structs::*;
 
 pub struct ConsolePlugin;
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum LogKind {
-    Log,
-    Info,
-    Debug,
-    Error,
-    Warning,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct ConsoleLine {
-    pub message: String,
-    pub kind: LogKind,
-}
-
-impl ConsoleLine {
-    pub fn new<T: ToString>(message: T, kind: LogKind) -> Self {
-        Self {
-            message: message.to_string(),
-            kind,
-        }
-    }
-
-    pub(crate) fn get_color(&self) -> egui::Color32 {
-        use egui::Color32;
-        use LogKind::*;
-
-        match &self.kind {
-            Log => Color32::WHITE,
-            Info => Color32::GREEN,
-            Debug => Color32::GRAY,
-            Warning => Color32::YELLOW,
-            Error => Color32::LIGHT_RED,
-        }
-    }
-}
-
-#[derive(Default)]
-struct UiState {
-    pub input_value: String,
-    pub lines: Vec<ConsoleLine>,
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct CommandSentEvent(String)
-
-impl From<&ConsoleLine> for CommandSentEvent {
-    fn from(console_line: &ConsoleLine) -> Self {
-        Self(console_line.clone())
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Deref, DerefMut)]
-pub struct WriteLineEvent(pub ConsoleLine);
-
-impl WriteLineEvent {
-    pub fn new<T: ToString>(message: T, kind: LogKind) -> Self {
-        Self(ConsoleLine::new(message, kind))
-    }
-}
-
-impl From<&ConsoleLine> for WriteLineEvent {
-    fn from(console_line: &ConsoleLine) -> Self {
-        Self(console_line.clone())
-    }
-}
 
 impl Plugin for ConsolePlugin {
     fn build(&self, app: &mut App) {
@@ -77,7 +12,8 @@ impl Plugin for ConsolePlugin {
         app.add_event::<WriteLineEvent>();
         app.add_event::<CommandSentEvent>();
         app.init_resource::<UiState>();
-        app.add_system(ui_example.system());
+        app.add_system(event_to_ui.system().label("event_to_ui"));
+        app.add_system(ui.system().label("ui").after("event_to_ui"));
     }
 
     fn name(&self) -> &str {
@@ -85,7 +21,17 @@ impl Plugin for ConsolePlugin {
     }
 }
 
-fn ui_example(egui_ctx: Res<EguiContext>, mut ui_state: ResMut<UiState>, mut events: EventWriter<CommandSentEvent>) {
+fn event_to_ui(mut ui_state: ResMut<UiState>, mut events: EventReader<WriteLineEvent>) {
+    for event in events.iter() {
+        ui_state.lines.push(event.0.clone());
+    }
+}
+
+fn ui(
+    egui_ctx: Res<EguiContext>,
+    mut ui_state: ResMut<UiState>,
+    mut events: EventWriter<CommandSentEvent>,
+) {
     use LogKind::*;
 
     egui::Window::new("Console").show(egui_ctx.ctx(), |ui| {
