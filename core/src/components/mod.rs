@@ -26,7 +26,15 @@ impl LookAt {
 }
 
 #[derive(Component)]
-pub struct MainCamera;
+pub struct MainCamera {
+    pub zoom: f32,
+}
+
+impl Default for MainCamera {
+    fn default() -> Self {
+        Self { zoom: 1. }
+    }
+}
 
 #[derive(Component, Debug, Default, Clone, Copy)]
 pub struct CursorPosition {
