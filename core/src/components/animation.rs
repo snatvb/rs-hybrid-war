@@ -5,7 +5,7 @@ pub struct AnimationSprite {
     pub frames: usize,
     pub stage: AnimationSpriteStage,
     pub duration: Timer,
-    pub(crate) current_frame: usize,
+    pub current_frame: usize,
 }
 
 impl AnimationSprite {

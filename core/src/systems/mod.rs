@@ -15,7 +15,7 @@ pub fn setup_main_camera(mut commands: Commands) {
         .spawn()
         .insert_bundle(OrthographicCameraBundle::new_2d())
         .insert(CursorPosition::default())
-        .insert(MainCamera::default());
+        .insert(MainCamera { zoom: 0.5 });
 }
 
 pub fn camera_zoom(mut query: Query<(&MainCamera, &mut OrthographicProjection)>) {
