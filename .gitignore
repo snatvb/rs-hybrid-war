@@ -1,5 +1,7 @@
-.vs/
-.vscode/
-.idea/
+.vscode
+.vs
+.idea
+pkg/
+target/
+Cargo.lock
 .DS_Store
-*.log

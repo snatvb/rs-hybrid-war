@@ -1,0 +1,17 @@
+[package]
+authors = ["snatvb <snatvb@ya.ru>"]
+description = "hybrid-war"
+edition = "2021"
+license = "MIT"
+name = "hybrid-war"
+version = "0.1.0"
+
+[workspace]
+members = ["core/", "console/"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+core = {path = "./core"}
+derive_more = "0.99"
+enum_dispatch = "0.3"
+lazy_static = "1.4"
